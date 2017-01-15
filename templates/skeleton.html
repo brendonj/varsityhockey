@@ -1,0 +1,127 @@
+{% set navigation = [
+    ("/", "home", "Home"),
+    ("/honours", "honours", "Honours"),
+    ("/committee", "committee", "Committee"),
+    ("/about", "about", "About Us"),
+    ("/contact", "contact", "Contact"),
+] -%}
+{% set active_page = active_page|default("home") -%}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!--
+        <meta name="description" content="">
+        <meta name="author" content="">
+        -->
+
+        <title>Waikato University Hockey Club</title>
+
+        <link type="text/css" rel="stylesheet" href="/css/bootstrap-3.3.7.min.css" />
+        <link type="text/css" rel="stylesheet" href="/css/varsityhockey.css" />
+        <link rel="icon" href="/images/favicon.ico">
+        <!--<script src="/scripts/bootstrap-3.3.7.min.js"></script>-->
+        {% if admin -%}
+        <script src="/scripts/varsityhockey.js"></script>
+        {% endif %}
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="banner">
+                    <div class="col-md-4">
+                        <a href="http://www.waikato.ac.nz">
+                            <img src="/images/uow-logo.png" />
+                        </a>
+                    </div>
+                    <div class="col-md-8">
+                        <h1>
+                            {% if active_page != "home" %}
+                            <a href="/">Waikato University Hockey Club</a>
+                            {% else %}
+                            Waikato University Hockey Club
+                            {% endif %}
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="menu" class="col-md-2 col-xs-12">
+                    <ul>
+                        {% for href, id, label in navigation -%}
+                            {% if id == active_page %}
+                                <li class="active">{{ label }}</li>
+                            {% else %}
+                                <li>
+                                    <a href="{{ href }}">{{ label }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if admin -%}
+                        <li>
+                            {% if active_page == "home" %}
+                            <a href="{{ request.url }}edit">Edit This Page</a>
+                            {% elif active_page != "edit" %}
+                            <a href="{{ request.url }}/edit">Edit This Page</a>
+                            {% endif %}
+                        </li>
+                        <li><a href="{{ logout_url }}">Logout</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div id="content" class="col-md-8 col-xs-12">
+                    {% block content %}{% endblock %}
+                </div>
+
+                <div id="sidebar" class="col-md-2 col-xs-12">
+                    <div class="sidebar-box">
+                        <div class="sidebar-heading">Sponsors</div>
+                        <div class="sidebar-content">
+                            <!-- TODO fetch from database -->
+                            <img src="/images/storageking.jpg"
+                                    class="img-circle sponsor-logo"/>
+                            <img src="/images/admor.png"
+                                    class="img-circle sponsor-logo"/>
+                            <img src="/images/uleisure.png"
+                                    class="img-circle sponsor-logo"/>
+                            <a href="http://waikatowardrobes.co.nz/">
+                                <img src="/images/waikatowardrobes.png"
+                                        class="img-circle sponsor-logo"
+                                        title="Waikato Wardrobes" />
+                            </a>
+                            <a href="http://calvertco.co/">
+                                <img src="/images/calvert.png"
+                                        class="img-circle sponsor-logo"
+                                        title="Calvert & Co" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sidebar-box">
+                        <div class="sidebar-content">
+                            <a href="https://www.facebook.com/varsityhockey/">
+                                <img src="/images/facebook.gif"
+                                        class="contact-logo" />
+                            </a>
+                            <a href="mailto:info@varsityhockey.co.nz">
+                                <img src="/images/email.gif"
+                                        class="contact-logo" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- row -->
+        </div> <!-- container -->
+    </body>
+
+</html>
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

@@ -1,0 +1,87 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "edit" %}
+{% block content %}
+
+<!-- http://getbootstrap.com/examples/blog/ -->
+
+<form class="form-horizontal" action="/article/{{ article.key.urlsafe() + "/" if article else '' }}edit"
+            enctype="multipart/form-data" method="post">
+    <div class="form-group">
+        <label for="title" class="col-md-2 col-xs-2 control-label">Title</label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="title" name="title"
+            value="{{ article['title']|striptags|title if article else '' }}"
+                    placeholder="Article Title">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="thumb-select" class="col-md-2 col-xs-2 control-label">
+            Thumbnail
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <div class="img-thumbnail-select-box">
+                {% for thumb in thumbs %}
+                <img class="img-thumbnail-select {{ 'active' if (loop.first and not article) or (article and article['thumb'] == thumb) }}"
+                        onclick="setSelectedThumbnail(this,
+                            '{{ thumb.urlsafe() }}')"
+                        src="/thumbs/{{ thumb.urlsafe() }}" />
+                {% endfor %}
+            </div>
+            <input type="hidden" id="thumb-select" name="thumb-select"
+                    value="{{thumbs[0].urlsafe() if thumbs[0] else '' }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="thumb-upload" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="file" class="form-control" id="thumb-upload"
+                    name="thumb-upload" onchange="clearSelectedThumbnail()" >
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="teaser" class="col-md-2 col-xs-2 control-label">
+            Teaser
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <textarea class="form-control" id="teaser" name="teaser" rows="8"
+                placeholder="Teaser content for front page.">{{ article['teaser'] if article else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="body" class="col-md-2 col-xs-2 control-label">
+            Body
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <textarea class="form-control" id="body" name="body" rows="12"
+                placeholder="Main content for article page. If this is left blank then the teaser content will be reused for the main article page.">{{ article['body'] if article else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="submit" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="submit" class="form-control" id="submit">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="delete" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <button type="button" class="btn btn-danger"
+                    onclick="deleteArticle('{{ article.key.urlsafe() }}')">
+                Delete
+            </button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

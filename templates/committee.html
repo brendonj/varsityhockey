@@ -1,0 +1,66 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "committee" %}
+{% block content %}
+
+<div class="article">
+
+    <h2>Club Committee</h2>
+
+    <p>
+    The committee is responsible for running the club, so that we can enjoy
+    playing our hockey. They are all volunteers and put in a lot of work to
+    keep things going smoothly. Please don't hesitate to get in touch with
+    them if you have any questions, ideas, or if you would like to be involved!
+    </p>
+
+    {% for member in committee %}
+    <div class="committee-member">
+        <div class="row">
+            <div class="col-md-2 col-xs-2 img-box">
+                <img class="img-thumbnail pull-left"
+                src="{{ '/thumbs/%s' % member.thumb.urlsafe() if member.thumb else '/images/brendonj.png' }}"
+                 />
+            </div>
+
+            <div class="article-heading pull-left col-md-10 col-xs-10">
+                <div>
+                    <h2 class="article-title">
+                        {{ member["name"]|striptags|title }}
+                    </h2>
+                </div>
+                <div>
+                    <div class="article-author">
+                        <small>
+                            {{ member["title"]|upper }}
+                        </small>
+                    </div>
+                    <div class="article-author">
+                        <small>
+                            <a href="mailto:{{ member['email'] }}">
+                                {{ member['email'] }}
+                            </a>
+                        </small>
+                    </div>
+                </div>
+                <div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+
+        {% if member['blurb'] %}
+        <div class="row">
+            <div class="article-body col-md-12 col-xs-12">
+                {{ member['blurb'] }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

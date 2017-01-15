@@ -1,0 +1,104 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "edit" %}
+{% block content %}
+
+{% macro display_member(member) -%}
+<form class="form-horizontal" action="/committee/{{ member.key.urlsafe() + "/" if member else '' }}edit"
+            enctype="multipart/form-data" method="post">
+
+    <div class="form-group">
+        <label for="name" class="col-md-2 col-xs-2 control-label">Name</label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="name" name="name"
+            value="{{ member['name']|striptags|title if member else '' }}"
+                    placeholder="Name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="title" class="col-md-2 col-xs-2 control-label">Title</label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="title" name="title"
+            value="{{ member['title'] if member else '' }}"
+                    placeholder="Title">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="thumb-upload" class="col-md-2 col-xs-2 control-label">
+            Thumbnail
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="file" class="form-control" id="thumb-upload"
+                    name="thumb-upload" onchange="clearSelectedThumbnail()" >
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="email" class="col-md-2 col-xs-2 control-label">
+            Email
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="email" name="email"
+                    placeholder="Email"
+                    value="{{ member['email'] if member else '' }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="blurb" class="col-md-2 col-xs-2 control-label">
+            Blurb
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <textarea class="form-control" id="blurb" name="blurb" rows="4"
+                placeholder="Blurb about this committee member.">{{ member['blurb'] if member else '' }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="email" class="col-md-2 col-xs-2 control-label">
+           Sort Order 
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="sort" name="sort"
+                    placeholder="Lower values display earlier"
+                    value="{{ member['sort'] if member else '100' }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="submit" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="submit" class="form-control" id="submit">
+        </div>
+    </div>
+</form>
+
+{%- endmacro %}
+
+<div class="article">
+
+    <h2>Add New Member</h2>
+
+    {{ display_member(None) }}
+
+    <br />
+    <h2>Edit Existing Members</h2>
+    <br />
+
+    {% for member in committee %}
+        {% if not loop.first %}
+        <br />
+        <hr />
+        <br />
+        <br />
+        {% endif %}
+        {{ display_member(member) }}
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

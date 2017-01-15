@@ -1,0 +1,74 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "contact" %}
+{% block content %}
+
+{% macro display_contact(contact) -%}
+<div class="committee-member">
+    <div class="row">
+        <div class="col-md-2 col-xs-2 img-box">
+            <img class="img-thumbnail pull-left"
+            src="{{ '/thumbs/%s' % contact.thumb.urlsafe() if contact.thumb else '/images/brendonj.png' }}"
+             />
+        </div>
+
+        <div class="article-heading pull-left col-md-10 col-xs-10">
+            <div>
+                <h2 class="article-title">
+                    {{ contact["name"]|striptags|title }}
+                </h2>
+            </div>
+            <div>
+                <div class="article-author">
+                    <small>
+                        {{ contact["title"]|upper }}
+                    </small>
+                </div>
+                <div class="article-author">
+                    <small>
+                        <a href="mailto:{{ contact['email'] }}">
+                            {{ contact['email'] }}
+                        </a>
+                    </small>
+                </div>
+            </div>
+            <div>
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+<div class="article">
+
+    <h2>Contact Us</h2>
+
+    <p>
+        The most efficient means of contacting the Waikato University Hockey
+        Club is by email. If you're interested in playing for the club then
+        contact:
+    </p>
+
+    {{ display_contact(mens) }}
+    {{ display_contact(womens) }}
+
+
+    <p>
+        For all other enquiries please contact
+        <a href="mailto:info@varsityhockey.co.nz">info@varsityhockey.co.nz</a>.
+        Postal enquiries and correspondence can be directed to:
+    </p>
+
+    <pre>
+Waikato University Hockey Club
+P.O. Box 24024
+Abels
+Hamilton 3253
+New Zealand</pre>
+
+
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

@@ -1,0 +1,79 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "home" %}
+{% block content %}
+
+<!-- http://getbootstrap.com/examples/blog/ -->
+
+{% for article in articles %}
+<div class="article">
+    <div class="row">
+        <div class="col-md-2 col-xs-2 img-box">
+            <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                <img class="img-thumbnail pull-left"
+                src="{{ '/thumbs/%s' % article.thumb.urlsafe() if article.thumb else '/images/brendonj.png' }}"
+                 />
+             </a>
+        </div>
+
+        <div class="article-heading pull-left col-md-10 col-xs-10">
+            <div>
+                <h2 class="article-title">
+                    <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                        {{ article["title"]|striptags|title }}
+                    </a>
+                </h2>
+            </div>
+            <div>
+                <div class="article-author">
+                    <small>
+                        {{ article["date"].strftime("%d %B %Y") }}
+                        by
+                        {{ article["author"] }}
+                    </small>
+                </div>
+            </div>
+            <div>
+                <hr />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="article-body col-md-12 col-xs-12">
+            {{ article["teaser"] }}
+            {% if article["body"]|length > 0 and article["teaser"] != article["body"] %}
+            <div>
+                <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                    Read more...
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endfor %}
+
+<div class="row navigation">
+    <div class="col-md-2 col-xs-2">
+        {% if newer %}
+            {% if newer == 1 %}
+                {% set newer = '' %}
+            {% endif %}
+        <a href="/{{ newer }}">
+            <span class="glyphicon glyphicon-arrow-left"></span> Newer
+        </a>
+        {% endif %}
+    </div>
+    <div class="col-md-2 col-xs-2 col-md-offset-8 col-xs-offset-8 pull-right">
+        {% if older %}
+        <a href="/{{ older }}">
+            Older <span class="glyphicon glyphicon-arrow-right"></span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->
