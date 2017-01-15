@@ -1,0 +1,67 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "honours" %}
+{% block content %}
+
+<div class="article">
+
+    <h2>Club Honours</h2>
+
+    <p>
+    We like to recognise those who perform to a high standard, are dedicated
+    in what they do and are great ambassadors for the sport of hockey. Club
+    members are (and have been) involved in playing, coaching and
+    administration at all levels, regional and national.
+    </p>
+
+    <h3>Life Members</h3>
+    {% for member in life_members %}
+    <div class="committee-member">
+        <div class="row">
+            <div class="col-md-2 col-xs-2 img-box">
+                <img class="img-thumbnail pull-left"
+                src="{{ '/thumbs/%s' % member.thumb.urlsafe() if member.thumb else '/images/brendonj.png' }}"
+                 />
+            </div>
+
+            <div class="article-heading pull-left col-md-10 col-xs-10">
+                <div>
+                    <h2 class="article-title">
+                        {{ member["name"]|striptags|title }}
+                    </h2>
+                </div>
+                <div>
+                    <div class="article-author">
+                        <small>
+                            {{ member["title"]|upper }}
+                        </small>
+                    </div>
+                    <div class="article-author">
+                        <small>
+                            <a href="mailto:{{ member['email'] }}">
+                                {{ member['email'] }}
+                            </a>
+                        </small>
+                    </div>
+                </div>
+                <div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+
+        {% if member['blurb'] %}
+        <div class="row">
+            <div class="article-body col-md-12 col-xs-12">
+                {{ member['blurb'] }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

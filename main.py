@@ -224,6 +224,29 @@ class ContactHandler(webapp2.RequestHandler):
         }))
 
 
+class AboutHandler(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template("templates/about.html")
+        user = users.get_current_user()
+        self.response.out.write(template.render({
+            "admin": True if user and users.is_current_user_admin() else False,
+            "logout_url": users.create_logout_url("/"),
+            "request": self.request,
+        }))
+
+
+class HonoursHandler(webapp2.RequestHandler):
+    def get(self):
+        template = jinja_environment.get_template("templates/honours.html")
+        user = users.get_current_user()
+        self.response.out.write(template.render({
+            "admin": True if user and users.is_current_user_admin() else False,
+            "logout_url": users.create_logout_url("/"),
+            "request": self.request,
+            "life_members": [],
+        }))
+
+
 class AdminHandler(webapp2.RequestHandler):
     def get(self):
         user = users.get_current_user()
@@ -244,6 +267,8 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/committee/edit', EditCommitteeHandler),
     webapp2.Route('/committee/<member_id>/edit', EditCommitteeHandler),
     webapp2.Route('/contact', ContactHandler),
+    webapp2.Route('/about', AboutHandler),
+    webapp2.Route('/honours', HonoursHandler),
     webapp2.Route('/thumbs/<thumb_id>', ThumbHandler),
     webapp2.Route('/article/edit', EditArticleHandler),
     webapp2.Route('/article/<article_id>', ArticleHandler),
