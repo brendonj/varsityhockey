@@ -219,8 +219,8 @@ class ContactHandler(webapp2.RequestHandler):
             "admin": True if user and users.is_current_user_admin() else False,
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
-            "mens": Committee.query().get(), # XXX
-            "womens": Committee.query().get() # XXX
+            "mens": Committee.query().filter(ndb.StringProperty("title") == "Mens Club Captain").get(),
+            "womens": Committee.query().filter(ndb.StringProperty("title") == "Womens Club Captain").get()
         }))
 
 
