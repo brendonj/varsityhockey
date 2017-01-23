@@ -7,6 +7,32 @@
 	overflow: auto;
 }
 
+/* adjust banner for extra small screens so it doesn't waste as much space */
+@media (max-width: 767px) {
+	.banner {
+		padding: 8px;
+	}
+
+	.banner a img {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	h1 {
+		font-size: 150%;
+		text-align: center;
+	}
+}
+
+/* adjust banner for small screens so it doesn't waste as much space */
+@media (max-width: 991px) and (min-width: 768px) {
+	h1 {
+		font-size: 200%;
+		text-align: center;
+	}
+}
+
 body {
 	background: white;
 }
