@@ -224,3 +224,17 @@ div.navigation a {
 	/*font-weight: bold;*/
 	color: black;
 }
+
+/* any screen size that has the sponsors at the bottom needs a footer */
+@media (max-width: 991px) {
+	.sidebar-box:first-child {
+		margin-top: 10px;
+	}
+
+	div.footer {
+		margin-top: 10px;
+		height: 10px;
+		width: 100%;
+		background: #be0403;
+	}
+}
