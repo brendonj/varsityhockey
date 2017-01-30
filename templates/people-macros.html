@@ -1,13 +1,13 @@
 {% macro display_contact(person, show_blurb=False) -%}
 <div class="committee-member">
     <div class="row">
-        <div class="col-md-2 col-xs-2 img-box">
+        <div class="col-md-2 col-sm-2 col-xs-4 img-box">
             <img class="img-thumbnail pull-left"
             src="{{ '/thumbs/%s' % person.thumb.urlsafe() if person.thumb else '/images/brendonj.png' }}"
              />
         </div>
 
-        <div class="article-heading pull-left col-md-10 col-xs-10">
+        <div class="article-heading pull-left col-md-10 col-sm-10 col-xs-8">
             <div>
                 <h2 class="article-title">
                     {{ person["name"]|striptags|title }}
