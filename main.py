@@ -14,11 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Using pytz locally has required a minor hack to sandbox.py as google have
+# yet to update dev_appserver.py to work with pytz
+# https://code.google.com/p/googleappengine/issues/detail?id=498&colspec=ID%20Type%20Component%20Status%20Stars%20Summary%20Language%20Priority%20Owner%20Log
+
 import os
 import webapp2
 import jinja2
 import time
 import datetime
+import pytz
 
 from User import User
 from Article import Article
@@ -108,6 +114,9 @@ class ArticleHandler(webapp2.RequestHandler):
         if article.visible is False:
             self.redirect("/")
 
+        article.date = article.date.replace(tzinfo=pytz.utc).astimezone(
+                pytz.timezone("Pacific/Auckland"))
+
         user = users.get_current_user()
         self.response.out.write(template.render({
             "article": article,
@@ -127,8 +136,15 @@ class MainHandler(webapp2.RequestHandler):
         # TODO could we do an infinite scroll thing and store the cursor
         # in a cookie that gets deleted as soon as the user leaves the site?
         articles, _, more = Article.query().filter(ndb.BooleanProperty("visible") == True).order(-Article.date).fetch_page(
-                3, start_cursor=None, offset=(page_number - 1) * 3)
+                3, start_cursor=None, offset=(page_number - 1) * 3,
+                keys_only=True)
+        articles = ndb.get_multi(articles)
         user = users.get_current_user()
+
+        for article in articles:
+            article.date = article.date.replace(tzinfo=pytz.utc).astimezone(
+                    pytz.timezone("Pacific/Auckland"))
+
         self.response.out.write(template.render({
             "articles": articles,
             "admin": True if user and users.is_current_user_admin() else False,
