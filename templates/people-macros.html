@@ -1,0 +1,46 @@
+{% macro display_contact(person, show_blurb=False) -%}
+<div class="committee-member">
+    <div class="row">
+        <div class="col-md-2 col-xs-2 img-box">
+            <img class="img-thumbnail pull-left"
+            src="{{ '/thumbs/%s' % person.thumb.urlsafe() if person.thumb else '/images/brendonj.png' }}"
+             />
+        </div>
+
+        <div class="article-heading pull-left col-md-10 col-xs-10">
+            <div>
+                <h2 class="article-title">
+                    {{ person["name"]|striptags|title }}
+                </h2>
+            </div>
+            <div>
+                <div class="article-author">
+                    <small>
+                        {{ person["title"]|upper }}
+                    </small>
+                </div>
+                <div class="article-author">
+                    <small>
+                        <a href="mailto:{{ person['email'] }}">
+                            {{ person['email'] }}
+                        </a>
+                    </small>
+                </div>
+            </div>
+            <div>
+                <hr />
+            </div>
+        </div>
+    </div>
+
+    {% if show_blurb and person['blurb'] %}
+    <div class="row">
+        <div class="article-body col-md-12 col-xs-12">
+            {{ person['blurb'] }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{%- endmacro %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->

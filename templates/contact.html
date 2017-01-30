@@ -1,43 +1,7 @@
+{% import "templates/people-macros.html" as people %}
 {% extends "templates/skeleton.html" %}
 {% set active_page = "contact" %}
 {% block content %}
-
-{% macro display_contact(contact) -%}
-<div class="committee-member">
-    <div class="row">
-        <div class="col-md-2 col-xs-2 img-box">
-            <img class="img-thumbnail pull-left"
-            src="{{ '/thumbs/%s' % contact.thumb.urlsafe() if contact.thumb else '/images/brendonj.png' }}"
-             />
-        </div>
-
-        <div class="article-heading pull-left col-md-10 col-xs-10">
-            <div>
-                <h2 class="article-title">
-                    {{ contact["name"]|striptags|title }}
-                </h2>
-            </div>
-            <div>
-                <div class="article-author">
-                    <small>
-                        {{ contact["title"]|upper }}
-                    </small>
-                </div>
-                <div class="article-author">
-                    <small>
-                        <a href="mailto:{{ contact['email'] }}">
-                            {{ contact['email'] }}
-                        </a>
-                    </small>
-                </div>
-            </div>
-            <div>
-                <hr />
-            </div>
-        </div>
-    </div>
-</div>
-{%- endmacro %}
 
 <div class="article">
 
@@ -49,9 +13,8 @@
         contact:
     </p>
 
-    {{ display_contact(mens) }}
-    {{ display_contact(womens) }}
-
+    {{ people.display_contact(mens, show_blurb=False) }}
+    {{ people.display_contact(womens, show_blurb=False) }}
 
     <p>
         For all other enquiries please contact
