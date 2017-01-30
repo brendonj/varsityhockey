@@ -136,7 +136,7 @@ class MainHandler(webapp2.RequestHandler):
         # TODO could we do an infinite scroll thing and store the cursor
         # in a cookie that gets deleted as soon as the user leaves the site?
         articles, _, more = Article.query().filter(ndb.BooleanProperty("visible") == True).order(-Article.date).fetch_page(
-                3, start_cursor=None, offset=(page_number - 1) * 3,
+                10, start_cursor=None, offset=(page_number - 1) * 10,
                 keys_only=True)
         articles = ndb.get_multi(articles)
         user = users.get_current_user()
