@@ -1,49 +1,9 @@
+{% import "templates/article-macros.html" as article_macros %}
 {% extends "templates/skeleton.html" %}
 {% set active_page = "article" %}
 {% block content %}
 
-<!-- http://getbootstrap.com/examples/blog/ -->
-
-<div class="article">
-    <div class="row">
-        <div class="col-md-2 col-sm-2 col-xs-4 img-box">
-            <img class="img-thumbnail pull-left"
-            src="{{ '/thumbs/%s' % article.thumb.urlsafe() if article.thumb else '/images/brendonj.png' }}"
-             />
-        </div>
-
-        <div class="article-heading pull-left col-md-10 col-sm-10 col-xs-8">
-            <div>
-                <h2 class="article-title">
-                    {{ article["title"]|striptags|title }}
-                </h2>
-            </div>
-            <div>
-                <div class="article-author">
-                    <small>
-                        {{ article["date"].strftime("%d %B %Y") }}
-                        by
-                        {{ article["author"] }}
-                    </small>
-                </div>
-            </div>
-            <div>
-                <hr />
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="article-body col-md-12 col-xs-12">
-            {% if article["body"]|length == 0 %}
-            {{ article["teaser"] }}
-            {% else %}
-            {{ article["body"] }}
-            {% endif %}
-        </div>
-    </div>
-
-</div>
+{{ article_macros.display_article(article, show_full=True) }}
 
 {% endblock %}
 

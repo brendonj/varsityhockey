@@ -1,0 +1,66 @@
+{% macro display_article(article, show_full=False) -%}
+<div class="article">
+    <div class="row">
+        <div class="col-md-2 col-sm-2 col-xs-4 img-box">
+            {% if not show_full %}
+            <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+            {% endif %}
+                <img class="img-thumbnail pull-left"
+                    src="{{ '/thumbs/%s' % article.thumb.urlsafe() if article.thumb else '/images/brendonj.png' }}"
+                 />
+            {% if not show_full %}
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="article-heading pull-left col-md-10 col-sm-10 col-xs-8">
+            <div>
+                <h2 class="article-title">
+                    {% if not show_full %}
+                    <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                    {% endif %}
+                        {{ article["title"]|striptags|title }}
+                    {% if not show_full %}
+                    </a>
+                    {% endif %}
+                </h2>
+            </div>
+            <div>
+                <div class="article-author">
+                    <small>
+                        {{ article["date"].strftime("%d %B %Y") }}
+                        by
+                        {{ article["author"] }}
+                    </small>
+                </div>
+            </div>
+            <div>
+                <hr />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="article-body col-md-12 col-xs-12">
+        {% if show_full %}
+            {% if article["body"]|length > 0 %}
+                {{ article["body"] }}
+            {% else %}
+                {{ article["teaser"] }}
+            {% endif %}
+        {% else %}
+            {{ article["teaser"] }}
+            {% if article["body"]|length > 0 and article["teaser"] != article["body"] %}
+            <div>
+                <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                    Read more...
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+        </div>
+    </div>
+</div>
+{%- endmacro %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->
