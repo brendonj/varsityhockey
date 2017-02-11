@@ -1,9 +1,22 @@
+{% import "templates/article-macros.html" as article_macros %}
 {% extends "templates/skeleton.html" %}
 {% set active_page = "edit" %}
 {% block content %}
 
 <!-- http://getbootstrap.com/examples/blog/ -->
 
+{% if article %}
+    {{ article_macros.display_article(article, show_full=False) }}
+    <hr />
+    <br />
+    {% if article["body"]|length > 0 and article["body"] != article["teaser"] %}
+        {{ article_macros.display_article(article, show_full=True) }}
+        <hr />
+        <br />
+    {% endif %}
+{% endif %}
+
+<div class="article" id="article-form">
 <form class="form-horizontal" action="/article/{{ article.key.urlsafe() + "/" if article else '' }}edit"
             enctype="multipart/form-data" method="post">
     <div class="form-group">
@@ -67,24 +80,34 @@
         <label for="submit" class="col-md-2 col-xs-2 control-label">
         </label>
         <div class="col-md-10 col-xs-10">
-            <input type="submit" class="form-control" id="submit">
+            <button type="submit" class="form-control"
+                    name="submit" id="submit">
+                Submit
+            </button>
         </div>
     </div>
 
-    {% if article %}
     <div class="form-group">
         <label for="delete" class="col-md-2 col-xs-2 control-label">
         </label>
-        <div class="col-md-10 col-xs-10">
+        <div class="col-md-5 col-xs-5">
+        {% if article %}
             <button type="button" class="btn btn-danger"
                     onclick="deleteArticle('{{ article.key.urlsafe() }}')">
                 Delete
             </button>
+        {% endif %}
+        </div>
+        <div class="col-md-5 col-xs-5">
+            <button type="submit" class="btn btn-info pull-right"
+                name="preview" id="preview" value="preview">
+                Preview
+            </button>
         </div>
     </div>
-    {% endif %}
 
 </form>
+</div>
 
 {% endblock %}
 

@@ -90,9 +90,22 @@ class EditArticleHandler(webapp2.RequestHandler):
         article.body = self.request.get("body")
         article.thumb = thumb
         article.visible = True
-        article_id = article.put()
 
-        self.redirect("/article/%s" % article_id.urlsafe())
+        if self.request.get("preview"):
+            # redisplay the edit page with the (temporary) changes
+            template = jinja_environment.get_template("templates/edit_article.html")
+            thumbs = Thumbnail.query().filter(ndb.BooleanProperty("exclusive") == False).order(-Thumbnail.date).fetch(keys_only=True)
+            self.response.out.write(template.render({
+                "article": article,
+                "admin": True,
+                "logout_url": users.create_logout_url("/"),
+                "request": self.request,
+                "thumbs": thumbs,
+            }))
+        else:
+            # commit the changes that have just been made
+            article_id = article.put()
+            self.redirect("/article/%s" % article_id.urlsafe())
 
     def delete(self, article_id):
         user = users.get_current_user()
