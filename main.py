@@ -40,6 +40,7 @@ from Thumbnail import Thumbnail
 from Committee import Committee 
 from Sponsor import Sponsor
 
+#from google.cloud import storage
 from google.appengine.ext import ndb
 from google.appengine.api import users
 
