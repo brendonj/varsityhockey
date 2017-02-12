@@ -64,13 +64,19 @@
                         {% endfor %}
 
                         {% if admin -%}
+                        <br />
+                        {% if active_page == "home" %}
                         <li>
-                            {% if active_page == "home" %}
-                            <a href="{{ request.url }}edit">Edit This Page</a>
-                            {% elif active_page != "edit" %}
-                            <a href="{{ request.url }}/edit">Edit This Page</a>
-                            {% endif %}
+                            <a href="{{ request.url }}edit">Add New Article</a>
                         </li>
+                        <li>
+                            <a href="/sponsors/edit">Edit Sponsors</a>
+                        </li>
+                        {% elif active_page != "edit" %}
+                        <li>
+                            <a href="{{ request.url }}/edit">Edit This Page</a>
+                        </li>
+                        {% endif %}
                         <li><a href="{{ logout_url }}">Logout</a></li>
                         {% endif %}
                     </ul>
@@ -84,37 +90,13 @@
                     <div class="sidebar-box">
                         <div class="sidebar-heading">Sponsors</div>
                         <div class="sidebar-content">
-                            <!-- TODO fetch from database -->
-                            <a href="http://www.storageking.co.nz/">
-                                <img src="/images/storageking.jpg"
-                                        class="img-circle sponsor-logo"
-                                        title="Storage King" />
+                            {% for sponsor in sponsors %}
+                            <a href="{{ sponsor.url }}">
+                                <img src="{{ sponsor.thumb if sponsor.thumb else '/images/brendonj.png' }}"
+                                    class="img-circle sponsor-logo"
+                                    title="{{ sponsor.name }}" />
                             </a>
-                            <a href="http://www.beactivefitness.co.nz/">
-                                <img src="/images/be-active-fitness.png"
-                                        class="img-circle sponsor-logo"
-                                        title="Be Active Fitness" />
-                            </a>
-                            <a href="http://www.admor.co.nz/">
-                                <img src="/images/admor.png"
-                                        class="img-circle sponsor-logo"
-                                        title="Admor Promotions" />
-                            </a>
-                            <a href="http://www.uleisure.co.nz">
-                                <img src="/images/uleisure.png"
-                                        class="img-circle sponsor-logo"
-                                        title="U Leisure" />
-                            </a>
-                            <a href="http://www.spidertech.co.nz/">
-                                <img src="/images/spider-tech.png"
-                                        class="img-circle sponsor-logo"
-                                        title="SpiderTech" />
-                            </a>
-                            <a href="http://www.one2onephotography.co.nz/">
-                                <img src="/images/one2one-photography.png"
-                                        class="img-circle sponsor-logo"
-                                        title="one2one Photography" />
-                            </a>
+                            {% endfor %}
                         </div>
                     </div>
                     <div class="sidebar-box">

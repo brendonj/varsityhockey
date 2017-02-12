@@ -32,3 +32,18 @@ function deleteArticle(article_id) {
 
 	request.send();
 }
+
+function deleteSponsor(sponsor_id) {
+	var request = new XMLHttpRequest();
+	request.open("DELETE", "/sponsors/" + sponsor_id + "/edit", true);
+
+	request.onload = function() {
+		if ( request.status == 200 ) {
+			document.location.reload();
+		} else {
+			/* TODO: do something useful if we get an error */
+		}
+	}
+
+	request.send();
+}

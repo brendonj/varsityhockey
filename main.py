@@ -18,6 +18,14 @@
 # Using pytz locally has required a minor hack to sandbox.py as google have
 # yet to update dev_appserver.py to work with pytz
 # https://code.google.com/p/googleappengine/issues/detail?id=498&colspec=ID%20Type%20Component%20Status%20Stars%20Summary%20Language%20Priority%20Owner%20Log
+# D:\apps\Google\Cloud SDK\google-cloud-sdk\platform\google_appengine\google\appengine\tools\devappserver2\python
+
+# Cloud storage docs:
+# https://cloud.google.com/appengine/docs/python/refdocs/google.appengine.api.images#google.appengine.api.images.delete_serving_url
+# https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/app-engine-cloud-storage-sample
+# https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/setting-up-cloud-storage
+# https://cloud.google.com/appengine/docs/python/googlecloudstorageclient/read-write-to-cloud-storage
+
 
 import os
 import webapp2
@@ -30,6 +38,8 @@ from User import User
 from Article import Article
 from Thumbnail import Thumbnail
 from Committee import Committee 
+from Sponsor import Sponsor
+
 from google.appengine.ext import ndb
 from google.appengine.api import users
 
@@ -63,6 +73,7 @@ class EditArticleHandler(webapp2.RequestHandler):
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
             "thumbs": thumbs,
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
     def post(self, article_id=None):
@@ -136,6 +147,7 @@ class ArticleHandler(webapp2.RequestHandler):
             "admin": True if user and users.is_current_user_admin() else False,
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
 
@@ -165,6 +177,7 @@ class MainHandler(webapp2.RequestHandler):
             "request": self.request,
             "newer": (page_number - 1) if page_number > 1 else None,
             "older": (page_number + 1) if more else None,
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
 
@@ -177,6 +190,7 @@ class CommitteeHandler(webapp2.RequestHandler):
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
             "committee": Committee.query().order(Committee.sort),
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
 
@@ -195,6 +209,7 @@ class EditCommitteeHandler(webapp2.RequestHandler):
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
             "committee": Committee.query().order(Committee.sort),
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
     def post(self, member_id=None):
@@ -249,7 +264,8 @@ class ContactHandler(webapp2.RequestHandler):
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
             "mens": Committee.query().filter(ndb.StringProperty("title") == "Mens Club Captain").get(),
-            "womens": Committee.query().filter(ndb.StringProperty("title") == "Womens Club Captain").get()
+            "womens": Committee.query().filter(ndb.StringProperty("title") == "Womens Club Captain").get(),
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
 
@@ -261,6 +277,7 @@ class AboutHandler(webapp2.RequestHandler):
             "admin": True if user and users.is_current_user_admin() else False,
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
 
@@ -273,7 +290,62 @@ class HonoursHandler(webapp2.RequestHandler):
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
             "life_members": [],
+            "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
+
+
+class EditSponsorsHandler(webapp2.RequestHandler):
+    def get(self):
+        """ Display the edit form for sponsors """
+        user = users.get_current_user()
+        if user is None or users.is_current_user_admin() is False:
+            self.redirect("/")
+
+        template = jinja_environment.get_template(
+                "templates/edit_sponsors.html")
+
+        self.response.out.write(template.render({
+            "admin": True,
+            "logout_url": users.create_logout_url("/"),
+            "request": self.request,
+            "sponsors": Sponsor.query().order(Sponsor.sort),
+        }))
+
+    def post(self, sponsor_id=None):
+        """ Create or update a sponsor """
+        user = users.get_current_user()
+        if user is None or users.is_current_user_admin() is False:
+            return
+
+        # fetch the existing sponsor if this is an update, otherwise create one
+        if sponsor_id:
+            sponsor = ndb.Key(urlsafe=sponsor_id).get()
+            # Delete existing thumbnail for this sponsor if there is a new one
+            if len(self.request.get("thumb-upload")) > 0:
+                sponsor.remove_thumbnail()
+        else:
+            sponsor = Sponsor()
+
+        # set/update the sponsor and put them into the datastore
+        sponsor.name = self.request.get("name")
+        sponsor.url = self.request.get("link")
+        sponsor.sort = int(self.request.get("sort"))
+        # upload the new thumbnail if there is one
+        if len(self.request.get("thumb-upload")) > 0:
+            sponsor.add_thumbnail(self.request.get("thumb-upload"))
+        sponsor_id = sponsor.put()
+
+        self.redirect("/sponsors/edit")
+
+    def delete(self, sponsor_id):
+        user = users.get_current_user()
+        if user is None or users.is_current_user_admin() is False:
+            return
+
+        sponsor = ndb.Key(urlsafe=sponsor_id).get()
+        if sponsor is not None:
+            sponsor.remove_thumbnail()
+            sponsor.key.delete()
 
 
 class AdminHandler(webapp2.RequestHandler):
@@ -302,6 +374,8 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/article/edit', EditArticleHandler),
     webapp2.Route('/article/<article_id>', ArticleHandler),
     webapp2.Route('/article/<article_id>/edit', EditArticleHandler),
+    webapp2.Route('/sponsors/edit', EditSponsorsHandler),
+    webapp2.Route('/sponsors/<sponsor_id>/edit', EditSponsorsHandler),
     webapp2.Route('/<page_number:\d+>', MainHandler),
 ], debug=True)
 
