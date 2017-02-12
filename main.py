@@ -222,26 +222,11 @@ class EditCommitteeHandler(webapp2.RequestHandler):
         # fetch the existing member if this is an update, otherwise create one
         if member_id:
             member = ndb.Key(urlsafe=member_id).get()
+            # Delete existing thumbnail for this member if there is a new one
+            if len(self.request.get("thumb-upload")) > 0:
+                member.remove_thumbnail()
         else:
             member = Committee()
-
-        # deal with creating/replacing committee member thumbnails
-        if len(self.request.get("thumb-upload")) > 0:
-            if member_id:
-                # delete the old thumbnail
-                member.thumb.delete()
-            # add the new thumbnail
-            thumbnail = Thumbnail()
-            thumbnail.image = Thumbnail.preprocess(
-                    self.request.get("thumb-upload"))
-            thumbnail.exclusive = True
-            thumb = thumbnail.put()
-        else:
-            if member_id:
-                # reuse the existing thumbnail
-                thumb = member.thumb
-            else:
-                thumb = None
 
         # set/update the committee member and put them into the datastore
         member.name = self.request.get("name")
@@ -249,11 +234,12 @@ class EditCommitteeHandler(webapp2.RequestHandler):
         member.email = self.request.get("email")
         member.blurb = self.request.get("blurb")
         member.sort = int(self.request.get("sort"))
-        member.thumb = thumb
+        # upload the new thumbnail if there is one
+        if len(self.request.get("thumb-upload")) > 0:
+            member.add_thumbnail(self.request.get("thumb-upload"))
         member_id = member.put()
 
         self.redirect("/committee/edit")
-
 
 
 class ContactHandler(webapp2.RequestHandler):
