@@ -1,21 +1,10 @@
 import logging
 import cloudstorage as gcs
-from google.appengine.ext import ndb
 from google.appengine.ext import blobstore
 from google.appengine.api import images
 from google.appengine.api import app_identity
 
-class Thumbnail(ndb.Model):
-    date = ndb.DateTimeProperty(auto_now=True)
-    image = ndb.BlobProperty()
-    exclusive = ndb.BooleanProperty(default=False)
-
-    @staticmethod
-    def preprocess(pre):
-        if pre is None:
-            return None
-        return images.resize(pre, 90, 90)
-
+class Thumbnail(object):
     @staticmethod
     def add_image(filename, image, size, clobber=False):
         # Write the file to cloud storage
@@ -57,5 +46,17 @@ class Thumbnail(ndb.Model):
         except gcs.errors.NotFoundError as e:
             logging.error(filename)
             logging.error(e)
+
+    @staticmethod
+    def get_images(directory, size):
+        bucket_name = app_identity.get_default_gcs_bucket_name()
+        stats = gcs.listbucket("/" + bucket_name + "/" + directory)
+        img_list = []
+        for stat in stats:
+            blobstore_filename = "/gs%s" % stat.filename
+            blob_key = blobstore.create_gs_key(blobstore_filename)
+            url = images.get_serving_url(blob_key, size=size, secure_url=True)
+            img_list.append(url)
+        return img_list
 
 # vim: set ts=4 sw=4 hlsearch expandtab :

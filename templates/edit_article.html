@@ -37,13 +37,12 @@
             <div class="img-thumbnail-select-box">
                 {% for thumb in thumbs %}
                 <img class="img-thumbnail-select {{ 'active' if (loop.first and not article) or (article and article['thumb'] == thumb) }}"
-                        onclick="setSelectedThumbnail(this,
-                            '{{ thumb.urlsafe() }}')"
-                        src="/thumbs/{{ thumb.urlsafe() }}" />
+                        onclick="setSelectedThumbnail(this, '{{ thumb }}')"
+                        src="{{ thumb }}" />
                 {% endfor %}
             </div>
             <input type="hidden" id="thumb-select" name="thumb-select"
-                    value="{{thumbs[0].urlsafe() if thumbs[0] else '' }}">
+                    value="{{thumbs[0] if thumbs[0] else '' }}">
             {% endif %}
         </div>
     </div>

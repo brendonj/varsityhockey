@@ -66,14 +66,13 @@ class EditArticleHandler(webapp2.RequestHandler):
         else:
             article = None
         user = users.get_current_user()
-        thumbs = Thumbnail.query().filter(ndb.BooleanProperty("exclusive") == False).order(-Thumbnail.date).fetch(keys_only=True)
 
         self.response.out.write(template.render({
             "article": article,
             "admin": True if user and users.is_current_user_admin() else False,
             "logout_url": users.create_logout_url("/"),
             "request": self.request,
-            "thumbs": thumbs,
+            "thumbs": Article.get_thumbnails(),
             "sponsors": Sponsor.query().order(Sponsor.sort),
         }))
 
@@ -82,15 +81,7 @@ class EditArticleHandler(webapp2.RequestHandler):
         if user is None or users.is_current_user_admin() is False:
             return
 
-        if len(self.request.get("thumb-upload")) == 0:
-            thumb = ndb.Key(urlsafe=self.request.get("thumb-select"))
-        else:
-            thumbnail = Thumbnail()
-            thumbnail.image = Thumbnail.preprocess(
-                    self.request.get("thumb-upload"))
-            thumbnail.exclusive = False
-            thumb = thumbnail.put()
-
+        # fetch the existing article if this is an update, otherwise create one
         if article_id:
             article = ndb.Key(urlsafe=article_id).get()
         else:
@@ -100,19 +91,23 @@ class EditArticleHandler(webapp2.RequestHandler):
         article.title = self.request.get("title")
         article.teaser = self.request.get("teaser")
         article.body = self.request.get("body")
-        article.thumb = thumb
         article.visible = True
+        # upload the new thumbnail if there is one
+        if len(self.request.get("thumb-upload")) > 0:
+            article.add_thumbnail(self.request.get("thumb-upload"))
+        else:
+            # add url to an existing thumbnail
+            article.thumb = self.request.get("thumb-select")
 
         if self.request.get("preview"):
             # redisplay the edit page with the (temporary) changes
             template = jinja_environment.get_template("templates/edit_article.html")
-            thumbs = Thumbnail.query().filter(ndb.BooleanProperty("exclusive") == False).order(-Thumbnail.date).fetch(keys_only=True)
             self.response.out.write(template.render({
                 "article": article,
                 "admin": True,
                 "logout_url": users.create_logout_url("/"),
                 "request": self.request,
-                "thumbs": thumbs,
+                "thumbs": Article.get_thumbnails(),
             }))
         else:
             # commit the changes that have just been made
@@ -357,7 +352,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/contact', ContactHandler),
     webapp2.Route('/about', AboutHandler),
     webapp2.Route('/honours', HonoursHandler),
-    webapp2.Route('/thumbs/<thumb_id>', ThumbHandler),
     webapp2.Route('/article/edit', EditArticleHandler),
     webapp2.Route('/article/<article_id>', ArticleHandler),
     webapp2.Route('/article/<article_id>/edit', EditArticleHandler),
