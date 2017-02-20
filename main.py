@@ -110,6 +110,7 @@ class EditArticleHandler(webapp2.RequestHandler):
                 "logout_url": users.create_logout_url("/"),
                 "request": self.request,
                 "thumbs": Article.get_thumbnails(),
+                "sponsors": Sponsor.query().order(Sponsor.sort),
             }))
         else:
             # commit the changes that have just been made
