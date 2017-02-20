@@ -46,7 +46,7 @@
                 {% endfor %}
             </div>
             <input type="hidden" id="thumb-select" name="thumb-select"
-                    value="{{thumbs[0] if thumbs[0] else '' }}">
+                    value="{{ thumbs[thumbs.index(article.thumb)] if article.thumb else thumbs[0] if thumbs[0] else '' }}">
             {% endif %}
         </div>
     </div>
