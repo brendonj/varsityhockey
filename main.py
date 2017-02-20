@@ -101,6 +101,8 @@ class EditArticleHandler(webapp2.RequestHandler):
 
         if self.request.get("preview"):
             # redisplay the edit page with the (temporary) changes
+            if not article.date:
+                article.date = datetime.datetime.now()
             template = jinja_environment.get_template("templates/edit_article.html")
             self.response.out.write(template.render({
                 "article": article,

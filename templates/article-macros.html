@@ -2,13 +2,13 @@
 <div class="article">
     <div class="row">
         <div class="col-md-2 col-sm-2 col-xs-4 img-box">
-            {% if not show_full %}
+            {% if not show_full and article.key %}
             <a href="{{ '/article/%s' % article.key.urlsafe() }}">
             {% endif %}
                 <img class="img-thumbnail pull-left"
                     src="{{ article.thumb if article.thumb else '/images/brendonj.png' }}"
                  />
-            {% if not show_full %}
+            {% if not show_full and article.key %}
             </a>
             {% endif %}
         </div>
@@ -16,11 +16,11 @@
         <div class="article-heading pull-left col-md-10 col-sm-10 col-xs-8">
             <div>
                 <h2 class="article-title">
-                    {% if not show_full %}
+                    {% if not show_full and article.key %}
                     <a href="{{ '/article/%s' % article.key.urlsafe() }}">
                     {% endif %}
                         {{ article["title"]|striptags|title }}
-                    {% if not show_full %}
+                    {% if not show_full and article.key %}
                     </a>
                     {% endif %}
                 </h2>
@@ -52,9 +52,13 @@
             {{ article["teaser"] }}
             {% if article["body"]|length > 0 and article["teaser"] != article["body"] %}
             <div>
+                {% if article.key %}
                 <a href="{{ '/article/%s' % article.key.urlsafe() }}">
+                {% endif %}
                     Read more...
+                {% if article.key %}
                 </a>
+                {% endif %}
             </div>
             {% endif %}
         {% endif %}

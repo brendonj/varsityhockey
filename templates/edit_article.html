@@ -17,7 +17,11 @@
 {% endif %}
 
 <div class="article" id="article-form">
-<form class="form-horizontal" action="/article/{{ article.key.urlsafe() + "/" if article else '' }}edit"
+{% if article and article.key %}
+<form class="form-horizontal" action="/article/{{ article.key.urlsafe() + "/" }}edit"
+{% else %}
+<form class="form-horizontal" action="/article/edit"
+{% endif %}
             enctype="multipart/form-data" method="post">
     <div class="form-group">
         <label for="title" class="col-md-2 col-xs-2 control-label">Title</label>
@@ -90,7 +94,7 @@
         <label for="delete" class="col-md-2 col-xs-2 control-label">
         </label>
         <div class="col-md-5 col-xs-5">
-        {% if article %}
+        {% if article and article.key %}
             <button type="button" class="btn btn-danger"
                     onclick="deleteArticle('{{ article.key.urlsafe() }}')">
                 Delete
