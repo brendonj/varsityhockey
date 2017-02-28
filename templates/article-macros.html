@@ -6,7 +6,7 @@
             <a href="{{ '/article/%s' % article.key.urlsafe() }}">
             {% endif %}
                 <img class="img-thumbnail pull-left"
-                    src="{{ article.thumb if article.thumb else '/images/brendonj.png' }}"
+                    src="{{ (article.thumb + '=s90') if article.thumb else '/images/brendonj.png' }}"
                  />
             {% if not show_full and article.key %}
             </a>

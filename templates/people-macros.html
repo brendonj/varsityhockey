@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-2 col-sm-2 col-xs-4 img-box">
             <img class="img-thumbnail pull-left"
-            src="{{ person.thumb if person.thumb else '/images/brendonj.png' }}"
+            src="{{ (person.thumb + '=s90') if person.thumb else '/images/brendonj.png' }}"
              />
         </div>
 

@@ -11,7 +11,7 @@ class Committee(ndb.Model):
 
     def add_thumbnail(self, image):
         filename = "committee/%s" % self.name.replace(" ", "")
-        self.thumb = Thumbnail.add_image(filename, image, 90, clobber=True)
+        self.thumb = Thumbnail.add_image(filename, image, clobber=True)
 
     def remove_thumbnail(self):
         filename = "committee/%s" % self.name.replace(" ", "")

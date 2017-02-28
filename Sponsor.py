@@ -11,7 +11,7 @@ class Sponsor(ndb.Model):
 
     def add_thumbnail(self, image):
         filename = "sponsors/%s" % self.name.replace(" ", "")
-        self.thumb = Thumbnail.add_image(filename, image, 45, clobber=True)
+        self.thumb = Thumbnail.add_image(filename, image, clobber=True)
 
     def remove_thumbnail(self):
         filename = "sponsors/%s" % self.name.replace(" ", "")

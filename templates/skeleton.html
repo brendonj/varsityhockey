@@ -104,7 +104,7 @@
                         <div class="sidebar-content">
                             {% for sponsor in sponsors %}
                             <a href="{{ sponsor.url }}">
-                                <img src="{{ sponsor.thumb if sponsor.thumb else '/images/brendonj.png' }}"
+                                <img src="{{ (sponsor.thumb + '=s45') if sponsor.thumb else '/images/brendonj.png' }}"
                                     class="img-circle sponsor-logo"
                                     title="{{ sponsor.name }}" />
                             </a>

@@ -17,10 +17,10 @@ class Article(ndb.Model):
         sha256 = hashlib.sha256()
         sha256.update(image)
         filename = "article/thumbs/%s" % sha256.hexdigest()
-        self.thumb = Thumbnail.add_image(filename, image, 90)
+        self.thumb = Thumbnail.add_image(filename, image)
 
     @staticmethod
     def get_thumbnails():
-        return Thumbnail.get_images("article/thumbs/", 90)
+        return Thumbnail.get_images("article/thumbs/")
 
 # vim: set ts=4 sw=4 hlsearch expandtab :
