@@ -1,0 +1,101 @@
+{% extends "templates/skeleton.html" %}
+{% set active_page = "edit" %}
+{% block content %}
+
+{% macro display_sponsor(sponsor) -%}
+<form class="form-horizontal" action="/sponsors/{{ sponsor.key.urlsafe() + "/" if sponsor else '' }}edit"
+            enctype="multipart/form-data" method="post">
+
+    <div class="form-group">
+        <label for="name" class="col-md-2 col-xs-2 control-label">Name</label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="name" name="name"
+            value="{{ sponsor['name']|striptags|title if sponsor else '' }}"
+                    placeholder="Name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="link" class="col-md-2 col-xs-2 control-label">Link</label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="link" name="link"
+            value="{{ sponsor['url'] if sponsor else '' }}"
+                    placeholder="Link">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="thumb-upload" class="col-md-2 col-xs-2 control-label">
+            Thumbnail
+        </label>
+        <div class="col-md-2 col-xs-2">
+            {% if sponsor %}
+            <img src="{{ sponsor['thumb'] }}" />
+            {% endif %}
+        </div>
+        <div class="col-md-8 col-xs-8">
+            <input type="file" class="form-control" id="thumb-upload"
+                    name="thumb-upload" onchange="clearSelectedThumbnail()" >
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="sort" class="col-md-2 col-xs-2 control-label">
+           Sort Order 
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="text" class="form-control" id="sort" name="sort"
+                    placeholder="Lower values display earlier"
+                    value="{{ sponsor['sort'] if sponsor else '100' }}">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="submit" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <input type="submit" class="form-control" id="submit">
+        </div>
+    </div>
+
+    {% if sponsor %}
+    <div class="form-group">
+        <label for="delete" class="col-md-2 col-xs-2 control-label">
+        </label>
+        <div class="col-md-10 col-xs-10">
+            <button type="button" class="btn btn-danger"
+                    onclick="deleteSponsor('{{ sponsor.key.urlsafe() }}')">
+                Delete
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</form>
+
+{%- endmacro %}
+
+<div class="article">
+
+    <h2>Add New Sponsor</h2>
+
+    {{ display_sponsor(None) }}
+
+    <br />
+    <h2>Edit Existing Sponsors</h2>
+    <br />
+
+    {% for sponsor in sponsors %}
+        {% if not loop.first %}
+        <br />
+        <hr />
+        <br />
+        <br />
+        {% endif %}
+        {{ display_sponsor(sponsor) }}
+    {% endfor %}
+
+</div>
+
+{% endblock %}
+
+<!-- vim: set ts=4 sw=4 hlsearch expandtab :-->
